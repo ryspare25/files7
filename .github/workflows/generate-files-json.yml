@@ -1,0 +1,34 @@
+name: Generate files.json
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate files.json
+        run: |
+          find files -type f \
+          | sed 's#^files/##' \
+          | jq -R . \
+          | jq -s . > files.json
+
+      - name: Commit changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+          git add files.json
+
+          git diff --cached --quiet || \
+          git commit -m "Auto-update files.json"
+
+          git push
+
+# Made with Bob
