@@ -1,13 +1,14 @@
 # files7
 
-Automated file listing system with GitHub Actions that automatically generates and updates `files.json` whenever you push changes.
+Automated random file redirector with GitHub Actions that automatically generates and updates `files.json` whenever you push changes.
 
 ## 🚀 Features
 
+- **Random File Selection**: Automatically picks and redirects to a random file from your collection
 - **Automatic Updates**: Push files to the `files/` directory and `files.json` is automatically regenerated
 - **Zero Maintenance**: No manual HTML or JSON editing required
-- **Clean UI**: Modern, responsive file browser interface
 - **GitHub Actions**: Fully automated workflow on every push to main branch
+- **GitHub Pages Ready**: Deployed at https://ryspare25.github.io/files7/
 
 ## 📁 Project Structure
 
@@ -31,7 +32,7 @@ repo/
 2. **Commit & Push**: Push your changes to GitHub
 3. **Automatic Generation**: GitHub Action scans the `files/` directory
 4. **Update files.json**: The workflow automatically updates `files.json`
-5. **Display**: `index.html` reads `files.json` and displays all files
+5. **Random Redirect**: Visit `index.html` and get redirected to a random file
 
 ## 📝 Workflow
 
@@ -66,12 +67,14 @@ The GitHub Action (`.github/workflows/generate-files-json.yml`) runs on every pu
    - Commit the changes
    - Your `index.html` will show the new file immediately
 
-### Viewing Files
+### Using the Random File Redirector
 
-Simply open `index.html` in a browser or deploy to GitHub Pages:
+Visit the page to get redirected to a random file:
 
+- **GitHub Pages**: https://ryspare25.github.io/files7/
 - **Local**: Open `index.html` directly in your browser
-- **GitHub Pages**: Enable GitHub Pages in repository settings to host online
+
+Each visit picks a different random file from your collection!
 
 ## 🛠️ Technical Details
 
@@ -83,14 +86,15 @@ The workflow uses:
 - `jq` to format the output as JSON
 - Git commands to commit and push changes automatically
 
-### File Browser (index.html)
+### Random File Redirector (index.html)
 
 Features:
 - Fetches `files.json` dynamically
-- Displays files with file type badges
-- Responsive design for mobile and desktop
+- Picks a random file from the list
+- Automatically redirects to the selected file
+- Shows loading animation during selection
 - Error handling for missing files
-- Automatic sorting
+- Works seamlessly with GitHub Pages
 
 ## 🔒 Permissions
 
@@ -107,13 +111,13 @@ The system works with any file type:
 
 ## 🎨 Customization
 
-### Modify the File Browser
+### Modify the Random Redirector
 
 Edit `index.html` to customize:
 - Styling and colors
-- File display format
-- Additional metadata
-- Filtering or search functionality
+- Loading animation
+- Redirect delay timing
+- Add file selection logic (e.g., weighted random, sequential)
 
 ### Change Workflow Trigger
 

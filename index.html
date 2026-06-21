@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Browser</title>
+    <title>Random File Redirector</title>
     <style>
         * {
             margin: 0;
@@ -15,105 +15,45 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 2rem;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
+            max-width: 500px;
             background: white;
             border-radius: 12px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+            padding: 3rem;
+            text-align: center;
         }
 
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
+        .spinner {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 2rem;
+            border: 4px solid #e2e8f0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            opacity: 0.9;
-            font-size: 0.95rem;
-        }
-
-        .content {
-            padding: 2rem;
-        }
-
-        .file-count {
-            background: #f7fafc;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            color: #4a5568;
-            font-weight: 500;
-        }
-
-        .file-list {
-            list-style: none;
-        }
-
-        .file-item {
-            background: #f7fafc;
-            margin-bottom: 0.75rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-        }
-
-        .file-item:hover {
-            background: #edf2f7;
-            border-color: #667eea;
-            transform: translateX(4px);
-        }
-
-        .file-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.25rem;
-            text-decoration: none;
+            font-size: 1.5rem;
             color: #2d3748;
-            gap: 1rem;
+            margin-bottom: 1rem;
         }
 
-        .file-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.75rem;
-            flex-shrink: 0;
-        }
-
-        .file-name {
-            flex: 1;
-            font-weight: 500;
-            word-break: break-all;
-        }
-
-        .file-arrow {
-            color: #a0aec0;
-            font-size: 1.25rem;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 3rem;
+        .message {
             color: #718096;
+            font-size: 1rem;
+            line-height: 1.6;
         }
 
         .error {
@@ -121,72 +61,37 @@
             color: #c53030;
             padding: 1rem;
             border-radius: 8px;
-            text-align: center;
+            margin-top: 1rem;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #718096;
-        }
-
-        .empty-state svg {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        footer {
-            text-align: center;
-            padding: 1.5rem;
-            color: #718096;
+        .file-info {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-family: monospace;
             font-size: 0.875rem;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        @media (max-width: 640px) {
-            body {
-                padding: 1rem;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .content {
-                padding: 1rem;
-            }
+            color: #4a5568;
+            word-break: break-all;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>📁 File Browser</h1>
-            <p class="subtitle">Automatically updated file listing</p>
-        </header>
-
-        <div class="content">
-            <div id="fileCount" class="file-count" style="display: none;"></div>
-            <div id="loading" class="loading">Loading files...</div>
-            <div id="error" class="error" style="display: none;"></div>
-            <ul id="fileList" class="file-list"></ul>
-        </div>
-
-        <footer>
-            Powered by GitHub Actions • Auto-updated on every push
-        </footer>
+        <div class="spinner"></div>
+        <h1>🎲 Picking a random file...</h1>
+        <p class="message">Please wait while we redirect you</p>
+        <div id="fileInfo" class="file-info" style="display: none;"></div>
+        <div id="error" class="error" style="display: none;"></div>
     </div>
 
     <script>
-        async function loadFiles() {
-            const loading = document.getElementById('loading');
-            const error = document.getElementById('error');
-            const fileList = document.getElementById('fileList');
-            const fileCount = document.getElementById('fileCount');
+        async function redirectToRandomFile() {
+            const errorDiv = document.getElementById('error');
+            const fileInfoDiv = document.getElementById('fileInfo');
 
             try {
+                // Fetch the files.json
                 const response = await fetch('files.json');
                 
                 if (!response.ok) {
@@ -195,49 +100,36 @@
                 
                 const files = await response.json();
                 
-                loading.style.display = 'none';
-                
                 if (files.length === 0) {
-                    fileList.innerHTML = `
-                        <div class="empty-state">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <p>No files found</p>
-                            <p style="font-size: 0.875rem; margin-top: 0.5rem;">Add files to the /files directory and push to GitHub</p>
-                        </div>
-                    `;
-                    return;
+                    throw new Error('No files available');
                 }
                 
-                fileCount.style.display = 'block';
-                fileCount.textContent = `${files.length} file${files.length !== 1 ? 's' : ''} available`;
+                // Pick a random file
+                const randomIndex = Math.floor(Math.random() * files.length);
+                const randomFile = files[randomIndex];
                 
-                files.sort();
+                // Show which file was selected
+                fileInfoDiv.style.display = 'block';
+                fileInfoDiv.textContent = `Selected: ${randomFile}`;
                 
-                fileList.innerHTML = files.map(file => {
-                    const extension = file.split('.').pop().toUpperCase();
-                    return `
-                        <li class="file-item">
-                            <a href="files/${encodeURIComponent(file)}" class="file-link" target="_blank">
-                                <div class="file-icon">${extension}</div>
-                                <span class="file-name">${file}</span>
-                                <span class="file-arrow">→</span>
-                            </a>
-                        </li>
-                    `;
-                }).join('');
+                // Redirect to the file
+                // Using relative path since we're deployed at https://ryspare25.github.io/files7/
+                setTimeout(() => {
+                    window.location.href = `files/${encodeURIComponent(randomFile)}`;
+                }, 500);
                 
             } catch (err) {
-                loading.style.display = 'none';
-                error.style.display = 'block';
-                error.textContent = `Error loading files: ${err.message}`;
+                document.querySelector('.spinner').style.display = 'none';
+                document.querySelector('h1').textContent = '❌ Error';
+                document.querySelector('.message').textContent = 'Failed to load files';
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = err.message;
                 console.error('Error loading files:', err);
             }
         }
 
-        // Load files when page loads
-        loadFiles();
+        // Start the redirect process when page loads
+        redirectToRandomFile();
     </script>
 </body>
 </html>
