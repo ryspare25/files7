@@ -112,10 +112,9 @@
                 fileInfoDiv.style.display = 'block';
                 fileInfoDiv.textContent = `Selected: ${randomFile}`;
                 
-                // Redirect to the file
-                // Using relative path since we're deployed at https://ryspare25.github.io/files7/
+                // Redirect to the file on GitHub
                 setTimeout(() => {
-                    window.location.href = `files/${encodeURIComponent(randomFile)}`;
+                    window.location.href = `https://github.com/ryspare25/files7/blob/in7/files/${encodeURIComponent(randomFile)}`;
                 }, 500);
                 
             } catch (err) {
