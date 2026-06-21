@@ -3,7 +3,7 @@ name: Generate files.json
 on:
   push:
     branches:
-      - main
+      - in7
 
 jobs:
   generate:
